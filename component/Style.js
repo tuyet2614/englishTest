@@ -2,7 +2,8 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#404040',
+        backgroundColor: '#ffffff',
+        // justifyContent: "center"
     },
     vocab: {
         flexDirection: "row",
@@ -56,6 +57,22 @@ const styles = StyleSheet.create({
         resizeMode: 'stretch',
         alignItems: 'center'
     },
+
+    detail: {
+        flex: 0.8,
+        backgroundColor: "#fffaaa",
+        margin: 20,
+        marginTop: 70,
+        justifyContent: 'center',
+        borderRadius: 30,
+        borderWidth: 2
+    },
+
+    choosen: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        padding: 30
+    }
 })
 
 export default styles
