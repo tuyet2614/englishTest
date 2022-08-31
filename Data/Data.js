@@ -1,4 +1,3 @@
-import { exp } from "react-native/Libraries/Animated/Easing"
 
 const Vocabulary = [
     {

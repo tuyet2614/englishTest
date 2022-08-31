@@ -30,7 +30,7 @@ const Dashboard = ({ navigation }) => {
             <FlatList
                 data={Vocabulary}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item, index) => index}
             />
         </View>
 

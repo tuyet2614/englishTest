@@ -70,7 +70,7 @@ const Tabs = () => {
                                     tintColor: focused ? '#e32f45' : '#748c94'
                                 }} />
 
-                            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>FOLDER</Text>
+                            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MY WORD</Text>
                         </View>
 
                     )

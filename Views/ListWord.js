@@ -18,7 +18,7 @@ const ListWord = ({ route, navigation }) => {
         return (
 
             <Item item={item} onPress={() => {
-                navigation.navigate('DetailWord', { title: item.title })
+                navigation.navigate('DetailWord', { title: item.title, mean: item.mean })
             }} />
 
 

@@ -2,8 +2,11 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
-        // justifyContent: "center"
+        // justifyContent: "center",
+        alignItems: 'center',
+        paddingTop: 50,
+        textAlign: 'center',
+
     },
     vocab: {
         flexDirection: "row",
@@ -20,7 +23,8 @@ const styles = StyleSheet.create({
     },
     status: {
         color: '#ffffff',
-        fontSize: 16
+        fontSize: 20,
+        fontWeight: "bold"
     },
     item: {
         backgroundColor: '#696969',
@@ -58,20 +62,41 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
 
-    detail: {
-        flex: 0.8,
-        backgroundColor: "#fffaaa",
-        margin: 20,
-        marginTop: 70,
-        justifyContent: 'center',
-        borderRadius: 30,
-        borderWidth: 2
-    },
-
     choosen: {
         flexDirection: "row",
         justifyContent: "space-between",
-        padding: 30
+        padding: 30,
+    },
+    frontStyle: {
+        width: 360,
+        height: 530,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        borderWidth: 2
+    },
+    backStyle: {
+        width: 360,
+        height: 530,
+        backgroundColor: '#ffffff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 20,
+        borderWidth: 2
+    },
+    image: {
+        flex: 1,
+        justifyContent: "center"
+    },
+    button: {
+        width: 100,
+        borderWidth: 3,
+        borderRadius: 20,
+        borderColor: '#ffffff',
+        height: 40,
+        alignItems: "center",
+        justifyContent: "center",
     }
 })
 
