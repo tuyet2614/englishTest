@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Text, FlatList, View, SafeAreaView } from "react-native";
-import Tabs from "./navigation/tabs";
+import Tabs from "./src/navigation/tabs";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
-import styles from "./component/Style";
+import styles from "./src/component/Style";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ListWord from "./Views/ListWord";
-import Dashboard from "./Views/Dashboard";
-import DetailVocab from "./Views/DetailVocab";
+import ListWord from "./src/Views/ListWord";
+import DetailVocab from "./src/Views/DetailVocab";
+import Practive from "./src/Views/Practive";
+import AddFolder from "./src/Views/AddFolder";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,8 @@ const App = () => {
 
         <Stack.Screen name="ListWord" component={ListWord} />
         <Stack.Screen name="DetailWord" component={DetailVocab} />
+        <Stack.Screen name="Practive" component={Practive} />
+        <Stack.Screen name="AddFolder" component={AddFolder} />
 
       </Stack.Navigator>
 

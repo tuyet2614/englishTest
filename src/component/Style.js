@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
         flex: 1,
         // justifyContent: "center",
         alignItems: 'center',
-        paddingTop: 50,
+        paddingTop: 35,
         textAlign: 'center',
 
     },
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
         marginVertical: 8,
 
     },
-    folder: {
+    group: {
         color: '#ffffff',
         fontSize: 18,
         fontWeight: "bold"
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         margin: 10
     },
-    icon: {
+    icon_search: {
         padding: 10,
         margin: 5,
         height: 25,
@@ -62,11 +62,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
 
-    choosen: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 30,
-    },
+
     frontStyle: {
         width: 360,
         height: 530,
@@ -89,14 +85,85 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center"
     },
+    choosen: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+
+    },
     button: {
-        width: 100,
+        width: 110,
         borderWidth: 3,
         borderRadius: 20,
         borderColor: '#ffffff',
-        height: 40,
+        height: 55,
         alignItems: "center",
+        margin: 30
+    },
+    icon_choose: {
+        width: 50,
+        height: 20,
+        tintColor: '#ffffff'
+    },
+    icon_practive: {
+        width: 50,
+        height: 45,
+        alignSelf: 'flex-end',
+        tintColor: '#D2691E',
+        marginRight: 20
+    },
+    myWord: {
+        flex: 1,
+    },
+
+    icon_addFolder: {
+        width: 40,
+        height: 40,
+        tintColor: '#D2691E',
+        resizeMode: 'stretch',
+    },
+    centeredView: {
+        flex: 1,
         justifyContent: "center",
+        alignItems: "center",
+
+    },
+    modalView: {
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 20,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+    },
+
+    textStyle: {
+        marginBottom: 15,
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+        fontSize: 20
+    },
+    inputAdd: {
+        width: 280,
+        borderBottomWidth: 2,
+        borderColor: '#1E90FF',
+        paddingBottom: 5,
+        marginBottom: 20
+    },
+    folder: {
+        width: 150,
+        height: 150,
+        borderWidth: 2,
+        marginBottom: 10,
+        alignItems: "center",
+        justifyContent: "center"
     }
 })
 

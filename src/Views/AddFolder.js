@@ -1,12 +1,12 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-const MyWord = () => {
+const AddFolder = () => {
     return (
         <View>
-            <Text>Hello My word</Text>
+            <Text>Add folder</Text>
         </View>
     )
 }
 
-export default MyWord
+export default AddFolder
