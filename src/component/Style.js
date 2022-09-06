@@ -164,6 +164,32 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignItems: "center",
         justifyContent: "center"
+    },
+    options: {
+        backgroundColor: '#ffffff',
+        marginBottom: 20,
+        height: 60,
+        borderRadius: 5,
+    },
+    check: {
+        borderWidth: 3,
+        height: 40,
+        borderRadius: 10,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 50,
+        backgroundColor: '#D2691E',
+    },
+    answer: {
+        width: 50,
+        height: 50,
+        backgroundColor: '#ffffff',
+        borderRadius: 100
+    },
+    numberAnswer: {
+        fontSize: 40,
+        fontWeight: 'bold'
     }
 })
 

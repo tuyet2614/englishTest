@@ -31,7 +31,7 @@ const ListWord = ({ route, navigation }) => {
         <View>
             <View>
                 <TouchableOpacity onPress={() => {
-                    navigation.navigate('Practive')
+                    navigation.navigate('Practice')
                 }}>
                     <Image source={require('../component/images/practive.png')} style={styles.icon_practive} />
                 </TouchableOpacity>
@@ -45,7 +45,7 @@ const ListWord = ({ route, navigation }) => {
                                 <FlatList
                                     data={[item]}
                                     renderItem={renderItem}
-                                    keyExtractor={(item, index) => index}
+                                    keyExtractor={(item) => item.id}
                                 />
                             ))
                         : '',

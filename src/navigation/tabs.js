@@ -4,6 +4,7 @@ import Dashboard from "../Views/Dashboard";
 import Search from "../Views/Search";
 import MyWord from "../Views/MyWord";
 import { View, Image, Text } from "react-native";
+import AddFolder from "../Views/AddFolder";
 
 
 const Tab = createBottomTabNavigator();
@@ -75,6 +76,26 @@ const Tabs = () => {
 
                     )
                 }} />
+
+            {/* <Tab.Screen
+                name="Add"
+                component={AddFolder}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
+                            <Image source={require("../component/images/folder.png")}
+                                resizeMode="contain"
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    tintColor: focused ? '#e32f45' : '#748c94'
+                                }} />
+
+                            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>ADD</Text>
+                        </View>
+
+                    )
+                }} /> */}
         </Tab.Navigator>
     )
 }

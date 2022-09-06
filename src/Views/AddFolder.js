@@ -1,11 +1,8 @@
-import React from "react";
-import { View, Text } from "react-native";
+import { View } from "react-native"
 
 const AddFolder = () => {
     return (
-        <View>
-            <Text>Add folder</Text>
-        </View>
+        <View>Hello AddFolder</View>
     )
 }
 
