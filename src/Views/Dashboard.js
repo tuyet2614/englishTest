@@ -11,8 +11,13 @@ import styles from '../component/Style';
 import ListWord from './ListWord';
 import Vocabulary from '../Data/Data';
 
-const Item = ({ item, onPress }) => (
+const Item = ({ index, item, onPress }) => (
     <TouchableOpacity onPress={onPress} style={styles.item}>
+        <View style={styles.index_group}>
+
+            <Text style={{ fontSize: 15, color: '#fff', }} >{index}</Text>
+        </View>
+
         <Text style={styles.group}>{item}</Text>
     </TouchableOpacity>
 );
@@ -25,9 +30,10 @@ const Dashboard = ({ navigation }) => {
     );
     console.log('group:', listGroup);
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({ index, item }) => {
         return (
             <Item
+                index={index + 1}
                 item={item}
                 onPress={() => {
                     navigation.navigate('ListWord', { group: item });
@@ -36,7 +42,7 @@ const Dashboard = ({ navigation }) => {
         );
     };
     return (
-        <View>
+        <View style={styles.container}>
             <FlatList
                 data={listGroup}
                 renderItem={renderItem}

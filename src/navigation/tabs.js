@@ -6,6 +6,9 @@ import MyWord from "../Views/MyWord";
 import { View, Image, Text } from "react-native";
 import AddFolder from "../Views/AddFolder";
 
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
@@ -22,13 +25,8 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
-                            <Image source={require("../component/images/home.png")}
-                                resizeMode="contain"
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    tintColor: focused ? '#e32f45' : '#748c94'
-                                }} />
+
+                            <FontAwesomeIcon icon={faHome} style={{ color: focused ? '#e32f45' : '#748c94' }} size={25} />
 
                             <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>HOME</Text>
                         </View>
@@ -43,14 +41,8 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
-                            <Image source={require("../component/images/search.png")}
-                                resizeMode="contain"
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    tintColor: focused ? '#e32f45' : '#748c94'
-                                }} />
 
+                            <FontAwesomeIcon icon={faMagnifyingGlass} style={{ color: focused ? '#e32f45' : '#748c94' }} size={25} />
                             <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>SEARCH</Text>
                         </View>
 
@@ -63,13 +55,7 @@ const Tabs = () => {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
-                            <Image source={require("../component/images/folder.png")}
-                                resizeMode="contain"
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    tintColor: focused ? '#e32f45' : '#748c94'
-                                }} />
+                            <FontAwesomeIcon icon={faFolderOpen} style={{ color: focused ? '#e32f45' : '#748c94' }} size={25} />
 
                             <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>MY WORD</Text>
                         </View>
@@ -77,7 +63,7 @@ const Tabs = () => {
                     )
                 }} />
 
-            {/* <Tab.Screen
+            <Tab.Screen
                 name="Add"
                 component={AddFolder}
                 options={{
@@ -95,7 +81,7 @@ const Tabs = () => {
                         </View>
 
                     )
-                }} /> */}
+                }} />
         </Tab.Navigator>
     )
 }

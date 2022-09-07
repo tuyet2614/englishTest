@@ -3,10 +3,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         // justifyContent: "center",
-        alignItems: 'center',
-        paddingTop: 35,
-        textAlign: 'center',
 
+        backgroundColor: '#fff'
     },
     vocab: {
         flexDirection: "row",
@@ -27,15 +25,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     item: {
-        backgroundColor: '#696969',
-        padding: 20,
+        backgroundColor: '#f3e5e5',
         marginVertical: 8,
-
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 15
     },
     group: {
-        color: '#ffffff',
+        color: '#D2691E',
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        marginBottom: 10
     },
     input: {
         margin: 12,
@@ -190,6 +190,23 @@ const styles = StyleSheet.create({
     numberAnswer: {
         fontSize: 40,
         fontWeight: 'bold'
+    },
+    iconVolume: {
+        borderWidth: 0,
+        padding: 5,
+        marginLeft: 10,
+        height: 30,
+        borderRadius: 100,
+        backgroundColor: '#7B68EE',
+        marginRight: 100
+    },
+    index_group: {
+        width: 35,
+        borderTopRightRadius: 5,
+        borderBottomRightRadius: 5,
+        marginRight: 40,
+        backgroundColor: 'FFCC66',
+        height: 22,
     }
 })
 

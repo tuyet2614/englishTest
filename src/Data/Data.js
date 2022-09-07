@@ -4,24 +4,30 @@ const Vocabulary = [
         group: 'contract',
         title: 'abide by',
         mean: 'tuân theo, giữ lời',
+
     },
     {
         id: 2,
         group: 'contract',
         title: 'agreement',
         mean: 'hợp đồng, giao kèo',
+        phonetic: "/əˈɡɹiːmənt/",
+        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/agreement-us.mp3"
     },
     {
         id: 3,
         group: 'contract',
         title: 'assurance',
         mean: 'sự cam đoan, sự đảm bảo',
+        phonetic: "/əˈʃɔːɹəns/",
+        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/assurance-us.mp3"
     },
     {
         id: 4,
         group: 'contract',
         title: 'cancellation',
         mean: 'Sự bãi bỏ, sự huỷ bỏ',
+        phonetic: "/kænsəˈleɪʃən/",
     },
 
     {
@@ -29,6 +35,8 @@ const Vocabulary = [
         group: 'marketing',
         title: 'attract',
         mean: 'hấp dẫn, lôi cuốn',
+        phonetic: "/əˈtɹækt/",
+        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/attract-uk.mp3"
     },
     {
         id: 6,

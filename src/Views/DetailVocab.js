@@ -43,7 +43,13 @@ const DetailVocab = ({ route }) => {
             source={require('../component/images/book2.jpeg')}
             resizeMode="cover"
             style={styles.image}>
-            <View style={styles.container}>
+            <View style={{
+                flex: 1,
+                // justifyContent: "center",
+                alignItems: 'center',
+                paddingTop: 35,
+                textAlign: 'center',
+            }}>
                 <GestureFlipView width={300} height={500}>
                     {renderFront()}
                     {renderBack()}

@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import styles from '../component/Style';
 import Vocabulary from '../Data/Data';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 const Search = ({ navigation }) => {
     const [filterData, setFilterData] = useState([]);
@@ -48,10 +50,7 @@ const Search = ({ navigation }) => {
                         onChangeText={text => searchFilter(text)}
                         value={search}
                     />
-                    <Image
-                        source={require('../component/images/search.png')}
-                        style={styles.icon_search}
-                    />
+                    <FontAwesomeIcon icon={faMagnifyingGlass} style={styles.icon_search} size={25} />
                 </View>
 
                 <View>
