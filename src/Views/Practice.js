@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -14,10 +14,42 @@ import {
 import Data from '../Data/Quizz';
 import { COLORS } from '../component/theme/Theme';
 import styles from '../component/Style';
+import { openDatabase } from 'react-native-sqlite-storage';
+
+const db = openDatabase({
+    name: 'Data',
+});
+
+let allQuestion
+db.transaction(txn => {
+    txn.executeSql(
+        `SELECT * FROM ListQuestion ORDER BY id DESC`,
+        [],
+        (sqlTxn, res) => {
+            console.log('categories retrieved successfully');
+            let len = res.rows.length;
+
+            if (len > 0) {
+                let results = [];
+                for (let i = 0; i < len; i++) {
+                    let item = res.rows.item(i);
+
+                    results.push({ id: item.id, question: item.question, options: [item.optionA, item.optionB, item.optionC, item.optionD], correctAnswer: item.answer });
+                }
+
+                allQuestion = results
+            }
+        },
+        error => {
+            console.log('error on getting categories ' + error.message);
+        },
+    );
+});
 
 
-const Practice = () => {
-    const allQuestion = Data
+
+const Practice = ({ navigation }) => {
+    // const [allQuestion, setAllQuestion] = useState([])
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [score, setScore] = useState(0)
     const [correctAnswer, setCorrectAnswer] = useState(null)
@@ -28,21 +60,24 @@ const Practice = () => {
     const [isShowNextButton, setisShowNextButton] = useState(false)
     const [progress, setProgress] = useState(new Animated.Value(0));
     const [falseAnswer, setFalseAnswer] = useState(0)
+
     const progressAnim = progress.interpolate({
         inputRange: [0, allQuestion.length],
         outputRange: ['0%', '100%'],
     });
 
 
+
+
     const showQuestion = () => (
         <View>
+            {console.log(currentQuestionIndex)}
             <Text style={styles.title}>{allQuestion[currentQuestionIndex].question}</Text>
         </View>
     )
 
-
     const validateAnswer = () => {
-        const correctOption = allQuestion[currentQuestionIndex].correct_option
+        const correctOption = allQuestion[currentQuestionIndex].correctAnswer
         setCorrectAnswer(correctOption)
         setIsCheckAnswer(true)
         if (chooseAnswer === correctOption) {
@@ -175,6 +210,24 @@ const Practice = () => {
         </View >
     )
 
+    const refreshTest = () => {
+        setIsShowScore(false)
+        setCurrentQuestionIndex(0)
+        setisShowNextButton(false)
+        setCorrectAnswer(null)
+        setIsCheckAnswer(false)
+        setchooseAnswer(null)
+        setdoneCheck(false)
+        setScore(0)
+        setFalseAnswer(0)
+        Animated.timing(progress, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: false,
+        }).start();
+    };
+
+
     return (
         <ImageBackground
             source={require('../component/images/book1.jpeg')}
@@ -241,12 +294,27 @@ const Practice = () => {
                             </Text>
 
                         </View>
-                        {/* Retry Quiz button */}
+                        <View>
+                            <View style={styles.finish}>
+                                <TouchableOpacity onPress={() => refreshTest()}>
+                                    <Text style={{ color: '#fff', fontSize: 23, fontWeight: 'bold' }}>Test Again</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.finish}>
+                                <TouchableOpacity onPress={() => navigation.goBack()}>
+                                    <Text style={{ color: '#fff', fontSize: 23, fontWeight: 'bold' }}>Back to Topics</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
 
                     </View>
-                    <TouchableOpacity onPress={() => setIsShowScore(!isShowScore)}><Text>return</Text></TouchableOpacity>
+
+
                 </View>
             </Modal>
+            <Text>Hello</Text>
 
         </ImageBackground>
     )

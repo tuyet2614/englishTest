@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     FlatList,
@@ -10,12 +10,13 @@ import {
 import styles from '../component/Style';
 import ListWord from './ListWord';
 import Vocabulary from '../Data/Data';
+import DataDb from '../service/DataDb';
 
 const Item = ({ index, item, onPress }) => (
     <TouchableOpacity onPress={onPress} style={styles.item}>
         <View style={styles.index_group}>
 
-            <Text style={{ fontSize: 15, color: '#fff', }} >{index}</Text>
+            <Text style={{ fontSize: 15, color: '#fff', marginLeft: 10, fontWeight: 'bold' }} >{index}</Text>
         </View>
 
         <Text style={styles.group}>{item}</Text>
@@ -28,7 +29,7 @@ const Dashboard = ({ navigation }) => {
     Vocabulary.map(item =>
         listGroup.includes(item.group) ? '' : listGroup.push(item.group),
     );
-    console.log('group:', listGroup);
+
 
     const renderItem = ({ index, item }) => {
         return (

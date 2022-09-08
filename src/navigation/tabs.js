@@ -5,6 +5,7 @@ import Search from "../Views/Search";
 import MyWord from "../Views/MyWord";
 import { View, Image, Text } from "react-native";
 import AddFolder from "../Views/AddFolder";
+import TestMusic from "../Views/TestMusic";
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -78,6 +79,26 @@ const Tabs = () => {
                                 }} />
 
                             <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>ADD</Text>
+                        </View>
+
+                    )
+                }} />
+
+            <Tab.Screen
+                name="check"
+                component={TestMusic}
+                options={{
+                    tabBarIcon: ({ focused }) => (
+                        <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
+                            <Image source={require("../component/images/folder.png")}
+                                resizeMode="contain"
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    tintColor: focused ? '#e32f45' : '#748c94'
+                                }} />
+
+                            <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 12 }}>Check</Text>
                         </View>
 
                     )

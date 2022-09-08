@@ -66,9 +66,16 @@ const Search = ({ navigation }) => {
                                         detail: item,
                                     });
                                 }}>
-                                <Text style={styles.group}>{item.title}</Text>
+                                <View>
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Text style={styles.group}>{item.title}</Text>
+                                        <Text style={styles.phonetic}>{item.phonetic}</Text>
+                                    </View>
 
-                                <Text style={styles.group}>{item.mean}</Text>
+
+                                    <Text style={{ color: '#000', fontWeight: 'bold' }}>{item.mean}</Text>
+                                </View>
+
                             </TouchableOpacity>
                         ))}
                     </ScrollView>

@@ -11,7 +11,7 @@ import {
 import { set } from 'react-native-reanimated';
 import { openDatabase } from 'react-native-sqlite-storage';
 const db = openDatabase({
-    name: 'quizzz_data',
+    name: 'Data',
 });
 
 const AddFolder = () => {
@@ -27,7 +27,7 @@ const AddFolder = () => {
     const createTables = () => {
         db.transaction(txn => {
             txn.executeSql(
-                `CREATE TABLE IF NOT EXISTS ListQuizz (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT, optionA TEXT, optionB TEXT, optionC TEXT, optionD TEXT, answer TEXT )`,
+                `CREATE TABLE IF NOT EXISTS ListQuestion (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT, optionA TEXT, optionB TEXT, optionC TEXT, optionD TEXT, answer TEXT )`,
                 [],
                 (sqlTxn, res) => {
                     console.log('table created successfully');
@@ -43,11 +43,11 @@ const AddFolder = () => {
         db.transaction(txn => {
 
             txn.executeSql(
-                `INSERT INTO ListQuizz (question, optionA, optionB, optionC, optionD) 
+                `INSERT INTO ListQuestion (question, optionA, optionB, optionC, optionD,answer) 
                 VALUES 
-                ('check','chao','cam on','kiem tra','xin loi'),
-                ('hello','chao','cam on','kiem tra','xin loi'),
-                ('thanks','chao','cam on','kiem tra','xin loi')`,
+                ('check','chao','cam on','kiem tra','xin loi','kiem tra'),
+                ('hello','chao','cam on','kiem tra','xin loi','chao'),
+                ('thanks','chao','cam on','kiem tra','xin loi','cam on')`,
 
 
                 (sqlTxn, res) => {
@@ -72,7 +72,7 @@ const AddFolder = () => {
         db.transaction(txn => {
 
             txn.executeSql(
-                `INSERT INTO ListQuizz (question, optionA, optionB, optionC, optionD) VALUES (?,?,?,?,?)`,
+                `INSERT INTO ListQuestion (question, optionA, optionB, optionC, optionD, answer) VALUES (?,?,?,?,?)`,
                 [question, optionA, optionB, optionC, optionD],
                 (sqlTxn, res) => {
                     console.log(`${question} category added successfully`);
@@ -92,7 +92,7 @@ const AddFolder = () => {
     const getCategories = () => {
         db.transaction(txn => {
             txn.executeSql(
-                `SELECT * FROM ListQuizz ORDER BY id DESC`,
+                `SELECT * FROM ListQuestion ORDER BY id DESC`,
                 [],
                 (sqlTxn, res) => {
                     console.log('categories retrieved successfully');
@@ -103,11 +103,14 @@ const AddFolder = () => {
                         for (let i = 0; i < len; i++) {
                             let item = res.rows.item(i);
 
-                            results.push({ id: item.id, question: item.question, options: [item.optionA, item.optionB, item.optionC, item.optionD], correctAnswer: item.correcAnswer });
+                            results.push({ id: item.id, question: item.question, options: [item.optionA, item.optionB, item.optionC, item.optionD], correctAnswer: item.answer });
                         }
 
                         setCategories(results);
                     }
+                    // else (
+                    //     setCategories([])
+                    // )
                 },
                 error => {
                     console.log('error on getting categories ' + error.message);
@@ -135,53 +138,50 @@ const AddFolder = () => {
         );
     };
 
+    const deleteQuizz = () => {
+        db.transaction(txn => {
+
+            txn.executeSql(
+                `DELETE FROM ListQuestion WHERE question=?`, [question],
+                (sqlTxn, res) => {
+                    getCategories();
+                    console.log('delete success');
+                    console.log(categories);
+
+                },
+                error => {
+                    console.log('error on delete category ' + error.message);
+                },
+            );
+        });
+    }
+
     useEffect(() => {
+
         createTables();
-        addQuizz();
+        // addQuizz();
         getCategories();
+
     }, []);
 
     return (
         <View>
             <StatusBar backgroundColor="#222" />
 
-            <TextInput
+            {/* <TextInput
                 placeholder="Enter question"
                 value={question}
                 onChangeText={(text) => setQuestion(text)}
                 style={{ marginHorizontal: 8 }}
-            />
-            <TextInput
-                placeholder="Enter answer1"
-                value={optionA}
-                onChangeText={(text) => setOptionA(text)}
-                style={{ marginHorizontal: 8 }}
-            />
-            <TextInput
-                placeholder="Enter answer2"
-                value={optionB}
-                onChangeText={(text) => setOptionB(text)}
-                style={{ marginHorizontal: 8 }}
-            />
-            <TextInput
-                placeholder="Enter answer3"
-                value={optionC}
-                onChangeText={(text) => setOptionC(text)}
-                style={{ marginHorizontal: 8 }}
-            />
-            <TextInput
-                placeholder="Enter answer4"
-                value={optionD}
-                onChangeText={(text) => setOptionD(text)}
-                style={{ marginHorizontal: 8 }}
-            />
+            /> */}
+
 
             <Button title="Submit" onPress={() => addQuizz()} />
 
             <FlatList
                 data={categories}
                 renderItem={renderCategory}
-                key={cat => cat.id}
+                key={(item) => item.id}
             />
         </View>
     );

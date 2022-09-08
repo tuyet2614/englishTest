@@ -205,8 +205,22 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 5,
         borderBottomRightRadius: 5,
         marginRight: 40,
-        backgroundColor: 'FFCC66',
+        backgroundColor: '#FFCC66',
         height: 22,
+    },
+    phonetic: {
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        fontSize: 15,
+        marginLeft: 10
+    },
+    finish: {
+        backgroundColor: '#EC7063',
+        width: 200, borderRadius: 20,
+        alignItems: 'center',
+        height: 40,
+        justifyContent: 'center',
+        marginBottom: 10
     }
 })
 

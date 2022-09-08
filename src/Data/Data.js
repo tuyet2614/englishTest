@@ -4,6 +4,7 @@ const Vocabulary = [
         group: 'contract',
         title: 'abide by',
         mean: 'tuân theo, giữ lời',
+        url: require('../component/images/abideby.mp3')
 
     },
     {
@@ -12,7 +13,7 @@ const Vocabulary = [
         title: 'agreement',
         mean: 'hợp đồng, giao kèo',
         phonetic: "/əˈɡɹiːmənt/",
-        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/agreement-us.mp3"
+        url: "https://api.dictionaryapi.dev/media/pronunciations/en/agreement-us.mp3"
     },
     {
         id: 3,
@@ -20,7 +21,7 @@ const Vocabulary = [
         title: 'assurance',
         mean: 'sự cam đoan, sự đảm bảo',
         phonetic: "/əˈʃɔːɹəns/",
-        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/assurance-us.mp3"
+        url: "https://api.dictionaryapi.dev/media/pronunciations/en/assurance-us.mp3"
     },
     {
         id: 4,
@@ -36,7 +37,7 @@ const Vocabulary = [
         title: 'attract',
         mean: 'hấp dẫn, lôi cuốn',
         phonetic: "/əˈtɹækt/",
-        audio: "https://api.dictionaryapi.dev/media/pronunciations/en/attract-uk.mp3"
+        url: "https://api.dictionaryapi.dev/media/pronunciations/en/attract-uk.mp3"
     },
     {
         id: 6,

@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
 import Vocabulary from '../Data/Data';
 import styles from '../component/Style';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
+import TrackPlayer from 'react-native-track-player';
 
-const Item = ({ item, onPress }) => (
+
+
+const Item = ({ item, onPress, onPlaySound }) => (
     <View style={styles.item}>
         <View style={styles.iconVolume}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPlaySound}>
                 <FontAwesomeIcon icon={faVolumeHigh} style={{ color: '#ffffff' }} size={18} />
             </TouchableOpacity>
         </View>
@@ -26,6 +29,24 @@ const ListWord = ({ route, navigation }) => {
     const vocabList = route.params.group;
     let listVocab = [];
 
+
+    const setUpTrackPlayer = async () => {
+        try {
+            await TrackPlayer.setupPlayer();
+            await TrackPlayer.add(Vocabulary);
+            console.log('Tracks added');
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+
+    useEffect(() => {
+        setUpTrackPlayer();
+
+        return (() => TrackPlayer.reset());
+    }, []);
+
     const renderItem = ({ item }) => {
         return (
             <Item
@@ -36,6 +57,7 @@ const ListWord = ({ route, navigation }) => {
                         detail: item,
                     });
                 }}
+                onPlaySound={() => { TrackPlayer.play(), console.log('play') }}
             />
         );
     };
