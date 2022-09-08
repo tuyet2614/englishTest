@@ -43,7 +43,7 @@ const TestMusic = () => {
         });
         setUpTrackPlayer();
 
-        return () => TrackPlayer.destroy();
+        return () => TrackPlayer.reset();
     }, []);
 
     return (
