@@ -66,16 +66,16 @@ const styles = StyleSheet.create({
     frontStyle: {
         width: 360,
         height: 530,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FFF4EB',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 20,
-        borderWidth: 2
+        borderWidth: 2,
     },
     backStyle: {
         width: 360,
         height: 530,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FFF4EB',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 20,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
         height: 30,
         borderRadius: 100,
         backgroundColor: '#7B68EE',
-        marginRight: 100
+
     },
     index_group: {
         width: 35,

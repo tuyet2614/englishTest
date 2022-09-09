@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Dashboard from "../Views/Dashboard";
 import Search from "../Views/Search";
@@ -10,9 +10,33 @@ import TestMusic from "../Views/TestMusic";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
+import Vocabulary from "../Data/Data";
+import Sound from 'react-native-sound';
+
+Sound.setCategory('Playback');
+let sound = [];
+
+const getSound = item => {
+    sound.push(
+        new Sound(item, error => {
+            if (error) {
+                console.log('failed to load the sound', error);
+                return;
+            }
+
+            //   when loaded successfully
+        }),
+    );
+};
+
 
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
+    useEffect(() => {
+        Vocabulary.map(item => getSound(item.url));
+
+        sound.map((item, index) => sound[index].setVolume(1));
+    }, []);
     return (
         <Tab.Navigator
             screenOptions={{
@@ -23,6 +47,7 @@ const Tabs = () => {
             <Tab.Screen
                 name="Home"
                 component={Dashboard}
+                initialParams={{ sound: sound }}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
@@ -33,12 +58,15 @@ const Tabs = () => {
                         </View>
 
                     )
-                }} />
+                }}
+
+            />
 
 
             <Tab.Screen
                 name="Search"
                 component={Search}
+                initialParams={{ sound: sound }}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View style={{ alignItems: 'center', justifyContent: 'center', top: 10 }}>
@@ -84,7 +112,7 @@ const Tabs = () => {
                     )
                 }} />
 
-            <Tab.Screen
+            {/* <Tab.Screen
                 name="check"
                 component={TestMusic}
                 options={{
@@ -102,7 +130,7 @@ const Tabs = () => {
                         </View>
 
                     )
-                }} />
+                }} /> */}
         </Tab.Navigator>
     )
 }

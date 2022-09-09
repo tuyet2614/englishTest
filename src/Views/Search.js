@@ -14,9 +14,10 @@ import Vocabulary from '../Data/Data';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
-const Search = ({ navigation }) => {
+const Search = ({ route, navigation }) => {
     const [filterData, setFilterData] = useState([]);
     const [search, setSearch] = useState('');
+    const sound = route.params.sound
 
     useEffect(() => {
         setFilterData(Vocabulary);
@@ -24,9 +25,9 @@ const Search = ({ navigation }) => {
     const searchFilter = text => {
         if (text) {
             const newVocab = Vocabulary.filter(item => {
-                const itemVocab = item.title
+                const itemVocab = (item.title
                     ? item.title.toLowerCase()
-                    : ''.toLowerCase();
+                    : ''.toLowerCase());
 
                 const textData = text.toLowerCase();
                 return itemVocab.indexOf(textData) > -1;
@@ -58,12 +59,13 @@ const Search = ({ navigation }) => {
 
                         {filterData.map(item => (
                             <TouchableOpacity
-                                style={styles.item}
+                                style={[styles.item, { paddingLeft: 15 }]}
                                 key={item.id}
                                 onPress={() => {
                                     navigation.navigate('DetailWord', {
                                         vocabGroup: Vocabulary,
                                         detail: item,
+                                        sound: sound
                                     });
                                 }}>
                                 <View>

@@ -11,7 +11,7 @@ import {
 import { set } from 'react-native-reanimated';
 import { openDatabase } from 'react-native-sqlite-storage';
 const db = openDatabase({
-    name: 'Data',
+    name: 'Data.db',
 });
 
 const AddFolder = () => {
@@ -61,34 +61,6 @@ const AddFolder = () => {
         });
     }
 
-
-    const addCategory = () => {
-
-        if (!question) {
-            alert('Enter category');
-            return false;
-        }
-
-        db.transaction(txn => {
-
-            txn.executeSql(
-                `INSERT INTO ListQuestion (question, optionA, optionB, optionC, optionD, answer) VALUES (?,?,?,?,?)`,
-                [question, optionA, optionB, optionC, optionD],
-                (sqlTxn, res) => {
-                    console.log(`${question} category added successfully`);
-                    getCategories();
-                    setQuestion('')
-                    setOptionA('')
-                    setOptionB('')
-                    setOptionC('')
-                    setOptionD('')
-                },
-                error => {
-                    console.log('error on adding category ' + error.message);
-                },
-            );
-        });
-    };
     const getCategories = () => {
         db.transaction(txn => {
             txn.executeSql(

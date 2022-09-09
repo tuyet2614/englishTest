@@ -5,12 +5,12 @@ import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 const tracks = [
     {
         id: 1,
-        url: require('../component/images/abideby.mp3'),
+        url: require('../component/audio/abideby.mp3'),
         title: 'Blues Beat',
     },
     {
         id: 2,
-        url: require('../tracks/tracks_country.mp3'),
+        url: require('../component/audio/access.mp3'),
         title: 'Blues Beat',
     },
 ];

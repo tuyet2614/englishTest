@@ -17,7 +17,7 @@ import styles from '../component/Style';
 import { openDatabase } from 'react-native-sqlite-storage';
 
 const db = openDatabase({
-    name: 'Data',
+    name: 'Data.db',
 });
 
 let allQuestion
@@ -70,7 +70,7 @@ const Practice = ({ navigation }) => {
 
 
     const showQuestion = () => (
-        <View>
+        <View key={currentQuestionIndex}>
             {console.log(currentQuestionIndex)}
             <Text style={styles.title}>{allQuestion[currentQuestionIndex].question}</Text>
         </View>
@@ -116,7 +116,7 @@ const Practice = ({ navigation }) => {
                     underlayColor="#F8F8F8	"
                     onPress={() => (setchooseAnswer(item))}
                     disabled={isCheckAnswer}
-                    key={item}
+                    key={item.question}
                     style={{
                         height: 60,
                         borderRadius: 10,
@@ -174,12 +174,13 @@ const Practice = ({ navigation }) => {
                             },
                         ]}></Animated.View>
                 </View>
-                <TouchableOpacity><Image source={require('../component/images/close.png')}
-                    style={{
-                        width: 25,
-                        height: 25,
-                        tintColor: '#ffffff'
-                    }} /></TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image source={require('../component/images/close.png')}
+                        style={{
+                            width: 25,
+                            height: 25,
+                            tintColor: '#ffffff'
+                        }} /></TouchableOpacity>
             </View>
 
         );

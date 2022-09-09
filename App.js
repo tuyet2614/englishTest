@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, FlatList, View, SafeAreaView } from "react-native";
 import Tabs from "./src/navigation/tabs";
 import { NavigationContainer, StackActions } from "@react-navigation/native";
@@ -9,9 +9,11 @@ import DetailVocab from "./src/Views/DetailVocab";
 import Practice from "./src/Views/Practice";
 import AddFolder from "./src/Views/AddFolder";
 
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+
 
   return (
     <NavigationContainer>
