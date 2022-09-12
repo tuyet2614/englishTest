@@ -9,25 +9,15 @@ import {
 } from 'react-native';
 import styles from '../component/Style';
 import ListWord from './ListWord';
-import Vocabulary from '../Data/Data';
+// import Vocabulary from '../Data/Data';
 import DataDb from '../service/DataDb';
-import Sound from 'react-native-sound';
+import { openDatabase } from 'react-native-sqlite-storage';
 
-Sound.setCategory('Playback');
-// let sound = [];
 
-// const getSound = item => {
-//     sound.push(
-//         new Sound(item, error => {
-//             if (error) {
-//                 console.log('failed to load the sound', error);
-//                 return;
-//             }
-
-//             //   when loaded successfully
-//         }),
-//     );
-// };
+const db = openDatabase({
+    name: 'run.db',
+    createFromLocation: '~vocabulary.db',
+}, null, null);
 
 const Item = ({ index, item, onPress }) => (
     <TouchableOpacity onPress={onPress} style={styles.item}>
@@ -41,19 +31,63 @@ const Item = ({ index, item, onPress }) => (
 );
 
 const Dashboard = ({ route, navigation }) => {
-    //   const [listGroup, setListGroup] = useState([]);
 
-    // useEffect(() => {
-    //     Vocabulary.map(item => getSound(item.url));
-
-    //     sound.map((item, index) => sound[index].setVolume(1));
-    // }, []);
-    const sound = route.params.sound
-    let listGroup = [];
-    Vocabulary.map(item =>
+    const [listVocabulary, setListVocabulary] = useState([])
+    let listGroup = []
+    listVocabulary.map(item =>
         listGroup.includes(item.group) ? '' : listGroup.push(item.group),
     );
 
+    const getCategories = () => {
+        db.transaction(txn => {
+            txn.executeSql(
+                'SELECT * FROM vocabulary',
+
+                [],
+                (sqlTxn, res) => {
+                    console.log('categories retrieved successfully');
+                    let len = res.rows.length;
+
+                    if (len > 0) {
+                        let results = [];
+                        for (let i = 0; i < len; i++) {
+                            let item = res.rows.item(i);
+
+                            results.push({
+                                id: item.id,
+                                group: item.group,
+                                title: item.title,
+                                phonetic: item.phonetic,
+                                eMean: item.eMean,
+                                mean: item.mean,
+                                img: item.img,
+                                exam: item.exam,
+                                trans: item.trans
+                            });
+                        }
+
+                        setListVocabulary(results);
+                    }
+                    // else (
+                    //     setCategories([])
+                    // )
+                },
+                error => {
+                    console.log('error on getting categories ' + error.message);
+                },
+            );
+        });
+    };
+
+    useEffect(() => {
+        let listGroup = [];
+        getCategories()
+
+        listVocabulary.map(item =>
+            listGroup.includes(item.group) ? '' : listGroup.push(item.group),
+        );
+
+    }, [])
 
     const renderItem = ({ index, item }) => {
         return (
@@ -61,7 +95,7 @@ const Dashboard = ({ route, navigation }) => {
                 index={index + 1}
                 item={item}
                 onPress={() => {
-                    navigation.navigate('ListWord', { group: item, sound: sound });
+                    navigation.navigate('ListWord', { group: item, Vocabulary: listVocabulary });
                 }}
             />
         );

@@ -48,8 +48,9 @@ db.transaction(txn => {
 
 
 
-const Practice = ({ navigation }) => {
+const Practice = ({ route, navigation }) => {
     // const [allQuestion, setAllQuestion] = useState([])
+    const listVocab = route.params.listVocab
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [score, setScore] = useState(0)
     const [correctAnswer, setCorrectAnswer] = useState(null)
@@ -66,7 +67,7 @@ const Practice = ({ navigation }) => {
         outputRange: ['0%', '100%'],
     });
 
-
+    console.log(listVocab)
 
 
     const showQuestion = () => (

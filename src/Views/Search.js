@@ -10,21 +10,69 @@ import {
     ScrollView,
 } from 'react-native';
 import styles from '../component/Style';
-import Vocabulary from '../Data/Data';
+// import listVocabulary from '../Data/Data';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHome, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { openDatabase } from 'react-native-sqlite-storage';
+
+
+const db = openDatabase({
+    name: 'run.db',
+    location: 'Library',
+    createFromLocation: '~vocabulary.db',
+});
 
 const Search = ({ route, navigation }) => {
     const [filterData, setFilterData] = useState([]);
     const [search, setSearch] = useState('');
-    const sound = route.params.sound
+    const [listVocabulary, setListVocabulary] = useState([])
 
+    const getCategories = () => {
+        db.transaction(txn => {
+            txn.executeSql(
+                'SELECT * FROM vocabulary',
+
+                [],
+                (sqlTxn, res) => {
+                    console.log('categories retrieved successfully');
+                    let len = res.rows.length;
+
+                    if (len > 0) {
+                        let results = [];
+                        for (let i = 0; i < len; i++) {
+                            let item = res.rows.item(i);
+
+                            results.push({
+                                id: item.id,
+                                group: item.group,
+                                title: item.title,
+                                phonetic: item.phonetic,
+                                eMean: item.eMean,
+                                mean: item.mean,
+                                img: item.img,
+                                exam: item.exam,
+                                trans: item.trans
+                            });
+                        }
+
+                        setListVocabulary(results);
+                        setFilterData(results);
+                    }
+
+                },
+                error => {
+                    console.log('error on getting categories ' + error.message);
+                },
+            );
+        });
+    };
     useEffect(() => {
-        setFilterData(Vocabulary);
+        getCategories()
+        // setFilterData(listVocabulary);
     }, []);
     const searchFilter = text => {
         if (text) {
-            const newVocab = Vocabulary.filter(item => {
+            const newVocab = listVocabulary.filter(item => {
                 const itemVocab = (item.title
                     ? item.title.toLowerCase()
                     : ''.toLowerCase());
@@ -35,7 +83,7 @@ const Search = ({ route, navigation }) => {
             setFilterData(newVocab);
             setSearch(text);
         } else {
-            setFilterData(Vocabulary);
+            setFilterData(listVocabulary);
             setSearch(text);
         }
     };
@@ -63,9 +111,9 @@ const Search = ({ route, navigation }) => {
                                 key={item.id}
                                 onPress={() => {
                                     navigation.navigate('DetailWord', {
-                                        vocabGroup: Vocabulary,
+                                        vocabGroup: listVocabulary,
                                         detail: item,
-                                        sound: sound
+
                                     });
                                 }}>
                                 <View>

@@ -1,93 +1,40 @@
 import React, { useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Image } from 'react-native';
-import Vocabulary from '../Data/Data';
+import { Text, View, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
+// import Vocabulary from '../Data/Data';
 import styles from '../component/Style';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
-// import TrackPlayer from 'react-native-track-player';
-import Sound from 'react-native-sound';
 
-Sound.setCategory('Playback');
-// let sound = [];
+import Tts from 'react-native-tts';
 
-// const getSound = item => {
-//     sound.push(
-//         new Sound(item, error => {
-//             if (error) {
-//                 console.log('failed to load the sound', error);
-//                 return;
-//             }
+Tts.setIgnoreSilentSwitch("ignore");
 
-//             //   when loaded successfully
-//         }),
-//     );
-// };
 
-const Item = ({ item, onPress, onPlaySound }) => (
-    <View style={styles.item}>
-        <View style={[styles.iconVolume, { marginRight: 100 }]}>
-            <TouchableOpacity onPress={onPlaySound}>
-                <FontAwesomeIcon
-                    icon={faVolumeHigh}
-                    style={{ color: '#ffffff' }}
-                    size={18}
-                />
-            </TouchableOpacity>
-        </View>
-        <View style={{ justifyContent: 'center' }}>
-            <TouchableOpacity onPress={onPress} style={{ alignContent: 'center' }}>
-                <Text style={styles.group}>{item.title}</Text>
-                <Text style={{ fontSize: 15, color: '#000' }}>{item.phonetic}</Text>
-            </TouchableOpacity>
-        </View>
-    </View>
-);
+Tts.addEventListener('tts-start');
+Tts.addEventListener('tts-progress');
+Tts.addEventListener('tts-finish');
+Tts.addEventListener('tts-cancel');
+
 const ListWord = ({ route, navigation }) => {
+    const Vocabulary = route.params.Vocabulary
     const vocabList = route.params.group;
-    const sound = route.params.sound
+
+
     let listVocab = [];
 
-    // useEffect(() => {
-    //     Vocabulary.map(item => getSound(item.url));
+    Vocabulary.map(item => item.group === vocabList ? listVocab.push(item) : '')
 
-    //     sound.map((item, index) => sound[index].setVolume(1));
-    // }, []);
 
-    const playPause = item => {
-        sound[item].play((success, error) => {
-            if (success) {
-                console.log('successfully finished playing');
-            } else {
-                console.log('playback failed due to audio decoding errors', error);
-            }
-        });
-    };
-
-    const renderItem = ({ item }) => {
-        return (
-            <Item
-                item={item}
-                onPress={() => {
-                    navigation.navigate('DetailWord', {
-                        vocabGroup: listVocab,
-                        detail: item,
-                        sound: sound
-                    });
-
-                }}
-                onPlaySound={() => {
-                    playPause(item.id - 1);
-                }}
-            />
-        );
-    };
 
     return (
         <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
             <View>
                 <TouchableOpacity
                     onPress={() => {
-                        navigation.navigate('Practice');
+                        navigation.navigate('Practice', {
+                            listVocab: listVocab,
+                            Vocabulary: Vocabulary
+                        });
                     }}>
                     <Image
                         source={require('../component/images/practive.png')}
@@ -96,18 +43,34 @@ const ListWord = ({ route, navigation }) => {
                 </TouchableOpacity>
             </View>
             <View>
-                {Vocabulary.map(item =>
-                    item.group === vocabList
-                        ? (listVocab.push(item),
-                            (
-                                <FlatList
-                                    data={[item]}
-                                    renderItem={renderItem}
-                                    keyExtractor={vocab => vocab.id}
+
+
+                <ScrollView>
+
+                    {listVocab.map(item =>
+                    (<TouchableOpacity style={styles.item} onPress={() => {
+                        navigation.navigate('DetailWord', {
+                            vocabGroup: listVocab,
+                            detail: item,
+
+                        });
+                    }}>
+                        <View style={[styles.iconVolume, { marginRight: 100 }]}>
+                            <TouchableOpacity onPress={() => Tts.speak(item.title)}>
+                                <FontAwesomeIcon
+                                    icon={faVolumeHigh}
+                                    style={{ color: '#ffffff' }}
+                                    size={18}
                                 />
-                            ))
-                        : '',
-                )}
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ justifyContent: 'center', alignContent: 'center' }}>
+                            <Text style={styles.group}>{item.title}</Text>
+                            <Text style={{ fontSize: 15, color: '#000' }}>{item.phonetic}</Text>
+                        </View>
+                    </TouchableOpacity>)
+                    )}
+                </ScrollView>
             </View>
         </View>
     );
