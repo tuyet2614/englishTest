@@ -8,7 +8,7 @@ import ListWord from "./src/Views/ListWord";
 import DetailVocab from "./src/Views/DetailVocab";
 import Practice from "./src/Views/Practice";
 import AddFolder from "./src/Views/AddFolder";
-
+import MyVocabulary from "./src/Views/MyVocabulary";
 
 
 const Stack = createNativeStackNavigator();
@@ -28,8 +28,9 @@ const App = () => {
 
         <Stack.Screen name="ListWord" component={ListWord} />
         <Stack.Screen name="DetailWord" component={DetailVocab} />
-        <Stack.Screen name="Practice" component={AddFolder} />
-        {/* <Stack.Screen name="AddFolder" component={AddFolder} /> */}
+        <Stack.Screen name="Practice" component={Practice} />
+        <Stack.Screen name="AddFolder" component={AddFolder} />
+        <Stack.Screen name="MyVocabulary" component={MyVocabulary} />
 
       </Stack.Navigator>
 

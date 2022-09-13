@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, TouchableOpacity, FlatList, Modal, TextInput } from "react-native";
 import styles from "../component/Style";
+import axios from 'axios';
+import vocabService from "../service/VocabService";
 
-const Item = ({ item, onPress }) => (
+const Item = ({ item, onPress, showEdit }) => (
 
     <TouchableOpacity onPress={onPress} style={styles.folder}>
-        <Text>{item}</Text>
+        <Text>{item.title}</Text>
         <TouchableOpacity style={{
             position: 'absolute',
             top: 10,
-            right: 10
-        }}>
+            right: 10,
+        }} onPress={showEdit}>
             <Image source={require('../component/images/pen.png')} style={styles.icon_addFolder} />
         </TouchableOpacity>
     </TouchableOpacity>
@@ -20,17 +22,70 @@ const MyWord = ({ navigation }) => {
     const [listFolder, setListFolder] = useState([])
     const [modalVisible, setModalVisible] = useState(false);
     const [titleFolder, setTitleFolder] = useState('')
-    console.log(listFolder)
+    const [isShowEdit, setIsShowEdit] = useState(false)
+    const [currentId, setCurrentId] = useState('')
+    const [editTitle, setEditTitle] = useState('')
+
     const renderItem = ({ item }) => {
         return (
             <Item
                 item={item}
                 onPress={() => {
-                    navigation.navigate('AddFolder');
+                    navigation.navigate('MyVocabulary', { titleGroup: item });
                 }}
+                showEdit={() => { setIsShowEdit(true), setTitleFolder(item.title), setCurrentId(item.id) }}
             />
         );
     };
+
+    const renderFolder = () => {
+        vocabService.getAll().then(res => {
+            setListFolder(res.data)
+        }).catch(error => console.log(error));
+    }
+
+
+    const onSubmitFormHandler = async () => {
+        let data = {
+            "title": titleFolder
+        }
+
+        vocabService.create(data).
+            then(res => {
+                setListFolder((pre) => [res.data, ...pre])
+                console.log("success fully")
+            }).catch(error => console.log(error));
+
+
+    };
+
+    const handleEditFolder = () => {
+        let data = {
+            "title": editTitle
+        }
+        vocabService.update(currentId, data)
+            .then(res => {
+                setListFolder(listFolder.map(item => item.id === currentId ? { ...res.data, title: editTitle } : item))
+
+            }).catch(error => console.log(error));
+    }
+
+    const handleDelete = () => {
+
+
+        vocabService.remove(currentId)
+            .then(res => {
+                const newFolderList = listFolder.filter(item => item.id !== currentId)
+                setListFolder(newFolderList)
+
+            })
+            .catch(error => console.log(error));
+    }
+
+    useEffect(() => {
+        renderFolder()
+    }, [])
+
     return (
         <View style={styles.myWord}>
             <View>
@@ -44,7 +99,7 @@ const MyWord = ({ navigation }) => {
                         setModalVisible(!modalVisible);
                     }}>
 
-                    <View style={styles.centeredView}>
+                    <View style={[styles.centeredView, { backgroundColor: 'rgba(64,64,64, 0.8)', }]}>
                         <View style={styles.modalView}>
 
                             <Text style={styles.textStyle}>Add new folder</Text>
@@ -57,10 +112,58 @@ const MyWord = ({ navigation }) => {
 
                                 <TouchableOpacity
                                     onPress={() => {
-                                        setListFolder([...listFolder, titleFolder]),
-                                            setModalVisible(!modalVisible)
+
+                                        setModalVisible(!modalVisible),
+                                            onSubmitFormHandler()
+
                                     }}>
                                     <Text style={styles.textStyle}>Add</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                        </View>
+                    </View>
+                </Modal>
+
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isShowEdit}
+                    onRequestClose={() => {
+                        Alert.alert("Modal has been closed.");
+                        setIsShowEdit(!isShowEdit);
+                    }}>
+
+                    <View style={[styles.centeredView, { backgroundColor: 'rgba(64,64,64, 0.8)', }]}>
+                        <View style={styles.modalView}>
+
+                            <Text style={styles.textStyle}>Edit folder</Text>
+                            <TextInput style={styles.inputAdd} defaultValue={titleFolder} onChangeText={(text) => { setEditTitle(text) }} />
+                            <View style={styles.choosen}>
+                                <TouchableOpacity
+                                    onPress={() => {
+
+                                        setIsShowEdit(!isShowEdit),
+                                            handleDelete()
+
+                                    }}>
+                                    <Text style={{ color: '#F87011', fontSize: 17, fontWeight: "bold" }}>Delete</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={() => setIsShowEdit(!isShowEdit)}>
+                                    <Text style={{ fontSize: 15 }} >Cancel</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        // setListFolder([...listFolder, titleFolder]),
+                                        setIsShowEdit(!isShowEdit),
+                                            handleEditFolder()
+
+                                    }}>
+                                    <Text style={{ color: '#f20', fontSize: 17, fontWeight: "bold" }}>OK</Text>
                                 </TouchableOpacity>
                             </View>
 

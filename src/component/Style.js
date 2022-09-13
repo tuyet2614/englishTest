@@ -221,7 +221,8 @@ const styles = StyleSheet.create({
         height: 40,
         justifyContent: 'center',
         marginBottom: 10
-    }
+    },
+
 })
 
 export default styles

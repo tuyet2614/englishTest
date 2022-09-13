@@ -14,42 +14,9 @@ import {
 import Data from '../Data/Quizz';
 import { COLORS } from '../component/theme/Theme';
 import styles from '../component/Style';
-import { openDatabase } from 'react-native-sqlite-storage';
-
-const db = openDatabase({
-    name: 'Data.db',
-});
-
-let allQuestion
-db.transaction(txn => {
-    txn.executeSql(
-        `SELECT * FROM ListQuestion ORDER BY id DESC`,
-        [],
-        (sqlTxn, res) => {
-            console.log('categories retrieved successfully');
-            let len = res.rows.length;
-
-            if (len > 0) {
-                let results = [];
-                for (let i = 0; i < len; i++) {
-                    let item = res.rows.item(i);
-
-                    results.push({ id: item.id, question: item.question, options: [item.optionA, item.optionB, item.optionC, item.optionD], correctAnswer: item.answer });
-                }
-
-                allQuestion = results
-            }
-        },
-        error => {
-            console.log('error on getting categories ' + error.message);
-        },
-    );
-});
-
-
 
 const Practice = ({ route, navigation }) => {
-    // const [allQuestion, setAllQuestion] = useState([])
+    // const [listVocab, setAllQuestion] = useState([])
     const listVocab = route.params.listVocab
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
     const [score, setScore] = useState(0)
@@ -61,24 +28,51 @@ const Practice = ({ route, navigation }) => {
     const [isShowNextButton, setisShowNextButton] = useState(false)
     const [progress, setProgress] = useState(new Animated.Value(0));
     const [falseAnswer, setFalseAnswer] = useState(0)
+    const [listAnswer, setListAnswer] = useState([])
+    const Vocabulary = route.params.Vocabulary
+    const good = listVocab.length * 2 / 3
 
     const progressAnim = progress.interpolate({
-        inputRange: [0, allQuestion.length],
+        inputRange: [0, listVocab.length],
         outputRange: ['0%', '100%'],
     });
 
-    console.log(listVocab)
+    const getOption = () => {
+        let answers = []
+        let rdAnswer = []
+        for (let i = 0; i < 3; i++) {
+            const item = Vocabulary[Math.floor(Math.random() * Vocabulary.length)]
+            item.mean === listVocab[currentQuestionIndex].mean ?
+                (item = Vocabulary[Math.floor(Math.random() * Vocabulary.length)]) : ''
+            answers.push(item.mean)
+            Vocabulary.splice((Vocabulary.indexOf(item)), 1)
+        }
+        answers.push(listVocab[currentQuestionIndex].mean)
 
 
-    const showQuestion = () => (
-        <View key={currentQuestionIndex}>
-            {console.log(currentQuestionIndex)}
-            <Text style={styles.title}>{allQuestion[currentQuestionIndex].question}</Text>
-        </View>
-    )
+        for (let i = 0; i < 4; i++) {
+            const rdItem = answers[Math.floor(Math.random() * answers.length)]
+            rdAnswer.push(rdItem)
+            answers.splice((answers.indexOf(rdItem)), 1)
+        }
+        setListAnswer(rdAnswer)
+    }
+
+    const showQuestion = () => {
+        useEffect(() => { getOption() }, [currentQuestionIndex])
+        // getOption()
+
+        return (
+            <View key={currentQuestionIndex}>
+
+                <Text style={styles.title}>{listVocab[currentQuestionIndex].title}</Text>
+            </View>
+        )
+
+    }
 
     const validateAnswer = () => {
-        const correctOption = allQuestion[currentQuestionIndex].correctAnswer
+        const correctOption = listVocab[currentQuestionIndex].mean
         setCorrectAnswer(correctOption)
         setIsCheckAnswer(true)
         if (chooseAnswer === correctOption) {
@@ -91,7 +85,7 @@ const Practice = ({ route, navigation }) => {
     }
 
     const nextQuestion = () => {
-        if (currentQuestionIndex === allQuestion.length - 1) {
+        if (currentQuestionIndex === listVocab.length - 1) {
             setIsShowScore(true)
         }
         else {
@@ -111,20 +105,22 @@ const Practice = ({ route, navigation }) => {
 
 
     const showOption = () => (
-        allQuestion[currentQuestionIndex].options.map(item => (
+
+        listAnswer.map(item => (
             <View>
                 <TouchableHighlight
                     underlayColor="#F8F8F8	"
                     onPress={() => (setchooseAnswer(item))}
                     disabled={isCheckAnswer}
-                    key={item.question}
+                    // key={item.title}
                     style={{
                         height: 60,
                         borderRadius: 10,
                         borderWidth: 1,
-                        alignItems: 'center',
+                        // alignItems: 'center',
                         justifyContent: 'center',
                         marginVertical: 5,
+                        padding: 5,
                         backgroundColor: doneCheck ?
                             (item === correctAnswer
                                 ? COLORS.success : item === chooseAnswer
@@ -151,7 +147,7 @@ const Practice = ({ route, navigation }) => {
                 top: 20
             }}>
                 <Animated.Text style={styles.group}>
-                    {currentQuestionIndex + 1}/{allQuestion.length}
+                    {currentQuestionIndex + 1}/{listVocab.length}
                 </Animated.Text>
 
                 <View
@@ -245,7 +241,7 @@ const Practice = ({ route, navigation }) => {
                 <TouchableOpacity
                     onPress={() => isShowNextButton ? (nextQuestion()) : (setdoneCheck(true), validateAnswer(chooseAnswer))}
                     style={styles.check} >
-                    <Text style={styles.title}>{!isShowNextButton ? 'Check' : currentQuestionIndex === allQuestion.length - 1 ? 'Submit' : 'Next'}</Text>
+                    <Text style={styles.title}>{!isShowNextButton ? 'Check' : currentQuestionIndex === listVocab.length - 1 ? 'Submit' : 'Next'}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -270,9 +266,9 @@ const Practice = ({ route, navigation }) => {
                             alignItems: 'center',
                         }}>
 
-                        <Image source={score > allQuestion.length / 2 ? require('../component/images/high.jpeg') : require('../component/images/low1.jpeg')} style={{ width: 180, height: 180, marginBottom: 15 }} />
+                        <Image source={score > good ? require('../component/images/high.jpeg') : require('../component/images/low1.jpeg')} style={{ width: 180, height: 180, marginBottom: 15 }} />
                         <Text style={{ fontSize: 30 }}>
-                            {score > allQuestion.length / 2 ? "Very good" : "that's not good enough!"}
+                            {score > good ? "Very good" : "that's not good enough!"}
                         </Text>
                         <Text style={{ fontSize: 25, fontWeight: 'bold', marginVertical: 15 }}>YOUR SCORE IS: </Text>
 
@@ -288,7 +284,7 @@ const Practice = ({ route, navigation }) => {
                                     fontSize: 23,
                                     fontWeight: 'bold',
                                     color:
-                                        score > allQuestion.length / 2
+                                        score > good
                                             ? COLORS.success
                                             : COLORS.error,
                                 }}>
