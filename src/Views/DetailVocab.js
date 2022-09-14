@@ -127,17 +127,20 @@ const DetailVocab = ({ route }) => {
                     <View style={{ paddingHorizontal: 15 }} >
 
                         <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-                            <TouchableOpacity
-                                style={{ alignSelf: 'center', marginRight: 5 }}
-                                onPress={() => {
-                                    Tts.speak(currentWord.exam), { rate: 0.5 };
-                                }}>
-                                <FontAwesomeIcon
-                                    icon={faVolumeHigh}
-                                    style={{ color: '#0357C2' }}
-                                    size={20}
-                                />
-                            </TouchableOpacity>
+                            {currentWord.exam && (
+                                <TouchableOpacity
+                                    style={{ alignSelf: 'center', marginRight: 5 }}
+                                    onPress={() => {
+                                        Tts.speak(currentWord.exam), { rate: 0.5 };
+                                    }}>
+                                    <FontAwesomeIcon
+                                        icon={faVolumeHigh}
+                                        style={{ color: '#0357C2' }}
+                                        size={20}
+                                    />
+                                </TouchableOpacity>
+                            )}
+
                             <Text
                                 style={{ fontSize: 18, color: '#7400BB', fontWeight: 'bold', marginLeft: 5 }}>
                                 {currentWord.exam}

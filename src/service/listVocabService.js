@@ -6,7 +6,7 @@ const getAll = (id) => {
 const create = (id, data) => {
     return vocab.post(`/dashboard/${id}/vocabulary`, data);
 };
-const update = (id, data, idItem) => {
+const update = (id, idItem, data) => {
     return vocab.put(`/dashboard/${id}/vocabulary/${idItem}`, data);
 };
 const remove = (id, idItem) => {

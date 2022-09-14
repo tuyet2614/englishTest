@@ -47,7 +47,9 @@ const MyWord = ({ navigation }) => {
 
     const onSubmitFormHandler = async () => {
         let data = {
-            "title": titleFolder
+            "title": titleFolder,
+            "handle": true,
+            "score": 0
         }
 
         vocabService.create(data).

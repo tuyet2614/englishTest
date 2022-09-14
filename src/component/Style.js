@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
     item: {
         backgroundColor: '#f3e5e5',
-        marginVertical: 8,
+        marginBottom: 15,
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 15
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
         height: 40,
         tintColor: '#D2691E',
         resizeMode: 'stretch',
+        // alignSelf: 'flex-end',
     },
     centeredView: {
         flex: 1,
@@ -222,6 +223,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginBottom: 10
     },
+    popUp: {
+        height: 100
+    }
 
 })
 

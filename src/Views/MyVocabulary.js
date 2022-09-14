@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Image, ScrollView, Modal, TextInput } from 'react-native';
+import {
+    Text,
+    View,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    ScrollView,
+    Modal,
+    TextInput,
+} from 'react-native';
 // import Vocabulary from '../Data/Data';
+import { launchImageLibrary } from 'react-native-image-picker'
 import styles from '../component/Style';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import listVocabService from '../service/listVocabService';
+import axios from 'axios';
 import Tts from 'react-native-tts';
-import ModalDropdown from 'react-native-modal-dropdown';
+import { err } from 'react-native-svg/lib/typescript/xml';
+import { set } from 'react-native-reanimated';
 
-Tts.setIgnoreSilentSwitch("ignore");
 
+Tts.setIgnoreSilentSwitch('ignore');
 
 Tts.addEventListener('tts-start');
 Tts.addEventListener('tts-progress');
@@ -17,27 +32,71 @@ Tts.addEventListener('tts-finish');
 Tts.addEventListener('tts-cancel');
 
 const MyVocabulary = ({ route, navigation }) => {
-    const titleGroup = route.params.titleGroup
-    const [listVocab, setListVocab] = useState([])
-    const [title, setTitle] = useState('')
-    const [phonetic, setPhonetic] = useState('')
-    const [eMean, setEMean] = useState('')
-    const [mean, setMean] = useState('')
-    const [img, setImg] = useState('')
-    const [exam, setExam] = useState('')
-    const [trans, setTrans] = useState('')
+    const titleGroup = route.params.titleGroup;
+    const [listVocab, setListVocab] = useState([]);
+    const [title, setTitle] = useState('');
+    const [phonetic, setPhonetic] = useState('');
+    const [eMean, setEMean] = useState('');
+    const [mean, setMean] = useState('');
+    const [img, setImg] = useState(null);
+    const [exam, setExam] = useState('');
+    const [trans, setTrans] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const [newVocab, setNewVocab] = useState({})
+    const [isShowEdit, setIsShowEdit] = useState(false)
+    const [currentId, setCurrentId] = useState('')
 
     const showListVocab = () => {
-        listVocabService.getAll(titleGroup.id).then(res => {
-            setListVocab(res.data)
-            console.log("success")
-        })
-            .catch(error => console.log(error.response.data));
+        listVocabService
+            .getAll(titleGroup.id)
+            .then(res => {
+                setListVocab(res.data);
+                console.log('success');
+            })
+            .catch(error => console.log(error));
+    };
+
+    const getPhonetic = (vocabTitle) => {
+        axios.get(`https://api.dictionaryapi.dev/api/v2/entries/en/${vocabTitle}`)
+            .then(res => {
+                console.log("call success")
+                let pronoun = res.data[0].phonetic ? res.data[0].phonetic : res.data[0].phonetics[0].text ? res.data[0].phonetics[0].text : res.data[0].phonetics[1].text
+                setPhonetic(pronoun)
+
+            })
+            .catch(error => console.log(error))
     }
 
     const handleAddVocab = async () => {
+        let data = {
+            title: title,
+            phonetic: phonetic,
+            eMean: eMean,
+            mean: mean,
+            img: img,
+            exam: exam,
+            trans: trans,
+        };
+        listVocabService
+            .create(titleGroup.id, data)
+            .then(res => {
+                setListVocab(pre => [res.data, ...pre]);
+                console.log('success fully');
+            })
+            .catch(error => console.log(error));
+    };
+
+    const handleDelete = (currentdelete) => {
+        listVocabService
+            .remove(titleGroup.id, currentdelete)
+            .then(res => {
+                const newlistVocab = listVocab.filter(item => item.id !== currentdelete);
+                setListVocab(newlistVocab);
+                console.log('success')
+            })
+            .catch(error => console.log(error));
+    };
+
+    const handleEdit = () => {
         let data = {
             "title": title,
             "phonetic": phonetic,
@@ -45,48 +104,71 @@ const MyVocabulary = ({ route, navigation }) => {
             "mean": mean,
             "img": img,
             "exam": exam,
-            "trans": trans
+            "trans": trans,
         }
-        listVocabService.create(titleGroup.id, data).
-            then(res => {
-                setListVocab((pre) => [res.data, ...pre])
-                console.log("success fully")
-            }).catch(error => console.log(error));
-
-    }
-
-    const handleDelete = (currentId) => {
-
-        listVocabService.remove(titleGroup.id, currentId)
+        listVocabService.update(titleGroup.id, currentId, data)
             .then(res => {
-                const newlistVocab = listVocab.filter(item => item.id !== currentId)
-                setListVocab(newlistVocab)
+                setListVocab(listVocab.map(item => item.id === currentId ? {
+                    ...res.data,
+                    title: title,
+                    phonetic: phonetic,
+                    eMean: eMean,
+                    mean: mean,
+                    img: img,
+                    exam: exam,
+                    trans: trans,
+                } : item))
 
-            })
-            .catch(error => console.log(error));
+            }).catch(error => console.log(error));
     }
+
+    const selectImage = () => {
+        const options = {
+            noData: true
+        }
+        launchImageLibrary(options, response => {
+            console.log("response", response.assets[0])
+            if (response.assets[0].uri) {
+                setImg(response.assets[0].uri)
+                console.log("check: ", img)
+            }
+
+        })
+
+    };
 
     useEffect(() => {
-        showListVocab()
-    }, [])
+        showListVocab();
+    }, []);
 
     return (
         <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
-            <View>
-                <Text>
-                    {titleGroup.id}
-                </Text>
-                <Text>
-                    {titleGroup.title}
-                </Text>
-            </View>
-            <View>
-                <TouchableOpacity>
-                    <Image
-                        source={require('../component/images/practive.png')}
-                        style={styles.icon_practive}
-                    />
-                </TouchableOpacity>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', height: 50, paddingHorizontal: 20 }}>
+                <View style={{ marginTop: 5 }}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            console.log('done');
+                            setPhonetic('')
+                            setModalVisible(true);
+                            console.log(modalVisible);
+
+                        }}>
+                        <Image
+                            source={require('../component/images/add1.png')}
+                            style={styles.icon_addFolder}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <TouchableOpacity>
+                        <Image
+                            source={require('../component/images/practive.png')}
+                            style={styles.icon_practive}
+                        />
+                    </TouchableOpacity>
+                </View>
+
             </View>
             <View>
                 <Modal
@@ -94,91 +176,250 @@ const MyVocabulary = ({ route, navigation }) => {
                     transparent={true}
                     visible={modalVisible}
                     onRequestClose={() => {
-                        Alert.alert("Modal has been closed.");
+                        Alert.alert('Modal has been closed.');
                         setModalVisible(!modalVisible);
                     }}>
-
-                    <View style={[styles.centeredView, { backgroundColor: 'rgba(64,64,64, 0.8)', }]}>
+                    <View
+                        style={[
+                            styles.centeredView,
+                            { backgroundColor: 'rgba(64,64,64, 0.8)' },
+                        ]}>
                         <View style={styles.modalView}>
-
                             <Text style={styles.textStyle}>Add new vocabulary</Text>
-                            <TextInput style={styles.inputAdd} placeholder='Enter title vocabulary' onChangeText={(text) => { setTitle(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='Enter phonetic' onChangeText={(text) => { setPhonetic(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='Enter english mean' onChangeText={(text) => { setEMean(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='Enter mean' onChangeText={(text) => { setMean(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='upload image' onChangeText={(text) => { setImg(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='Enter example' onChangeText={(text) => { setExam(text) }} />
-                            <TextInput style={styles.inputAdd} placeholder='Enter translation' onChangeText={(text) => { setTrans(text) }} />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter title vocabulary"
+                                onChangeText={text => {
+                                    setTitle(text);
+                                }}
+                                onEndEditing={() => getPhonetic(title)}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter phonetic"
+                                value={phonetic}
+                                onChangeText={text => {
+                                    setPhonetic(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter english mean"
+                                onChangeText={text => {
+                                    setEMean(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter mean"
+                                onChangeText={text => {
+                                    setMean(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter example"
+                                onChangeText={text => {
+                                    setExam(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder="Enter translation"
+                                onChangeText={text => {
+                                    setTrans(text);
+                                }}
+                            />
+                            <TouchableOpacity onPress={selectImage}>
+                                <FontAwesomeIcon
+                                    icon={faImage}
+                                    style={{ color: '#03B903', marginBottom: 10, alignSelf: 'center' }}
+                                    size={30}
+                                />
+                            </TouchableOpacity>
                             <View style={styles.choosen}>
                                 <TouchableOpacity
                                     onPress={() => setModalVisible(!modalVisible)}>
-                                    <Text style={styles.textStyle} >Cancel</Text>
+                                    <Text style={styles.textStyle}>Cancel</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    onPress={() => {
+
+                                        setModalVisible(!modalVisible);
+                                        handleAddVocab();
+
+                                    }}>
+                                    <Text style={styles.textStyle}>Add</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isShowEdit}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!isShowEdit);
+                    }}>
+                    <View
+                        style={[
+                            styles.centeredView,
+                            { backgroundColor: 'rgba(64,64,64, 0.8)' },
+                        ]}>
+                        <View style={styles.modalView}>
+                            <Text style={styles.textStyle}>Edit vocabulary</Text>
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter title'
+                                defaultValue={title}
+                                onChangeText={text => {
+                                    setTitle(text);
+                                }}
+                                onEndEditing={() => getPhonetic(title)}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter phonetic'
+                                defaultValue={phonetic}
+                                onChangeText={text => {
+                                    setPhonetic(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter english mean'
+                                defaultValue={eMean}
+                                onChangeText={text => {
+                                    setEMean(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter mean'
+                                defaultValue={mean}
+                                onChangeText={text => {
+                                    setMean(text);
+                                }}
+                            />
+
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter exam'
+                                defaultValue={exam}
+                                onChangeText={text => {
+                                    setExam(text);
+                                }}
+                            />
+                            <TextInput
+                                style={styles.inputAdd}
+                                placeholder='enter translate exam'
+                                defaultValue={trans}
+                                onChangeText={text => {
+                                    setTrans(text);
+                                }}
+                            />
+                            <TouchableOpacity onPress={selectImage}>
+                                <FontAwesomeIcon
+                                    icon={faImage}
+                                    style={{ color: '#03B903', marginBottom: 10, alignSelf: 'center' }}
+                                    size={30}
+                                />
+                            </TouchableOpacity>
+                            <View style={styles.choosen}>
+                                <TouchableOpacity
+                                    onPress={() => setIsShowEdit(!isShowEdit)}>
+                                    <Text style={styles.textStyle}>Cancel</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     onPress={() => {
                                         // setNewVocab({ title: title, phonetic: phonetic, eMean: eMean, mean: mean, img: img, exam: exam, trans: trans })
                                         // setListVocab([...listVocab, newVocab]),
-                                        setModalVisible(!modalVisible),
-                                            handleAddVocab()
-
+                                        setIsShowEdit(!isShowEdit);
+                                        handleEdit();
                                     }}>
-                                    <Text style={styles.textStyle}>Add</Text>
+                                    <Text style={styles.textStyle}>OK</Text>
                                 </TouchableOpacity>
                             </View>
-
                         </View>
                     </View>
                 </Modal>
             </View>
             <View>
-
-
                 <ScrollView>
+                    {listVocab.map(item => (
+                        <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => {
+                                navigation.navigate('DetailWord', {
+                                    vocabGroup: listVocab,
+                                    detail: item,
+                                });
+                            }}>
+                            <View style={[styles.iconVolume, { marginRight: 100 }]}>
+                                <TouchableOpacity onPress={() => Tts.speak(item.title)}>
+                                    <FontAwesomeIcon
+                                        icon={faVolumeHigh}
+                                        style={{ color: '#ffffff' }}
+                                        size={18}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ justifyContent: 'center', alignContent: 'center' }}>
+                                <Text style={styles.group}>{item.title}</Text>
+                                <Text style={{ fontSize: 15, color: '#000' }}>
+                                    {item.phonetic}
+                                </Text>
+                            </View>
+                            <View style={{ position: 'absolute', right: 20, top: 15 }}>
 
-                    {listVocab.map(item =>
-                    (<TouchableOpacity style={styles.item} onPress={() => {
-                        navigation.navigate('DetailWord', {
-                            vocabGroup: listVocab,
-                            detail: item,
 
-                        });
-                    }}>
-                        <View style={[styles.iconVolume, { marginRight: 100 }]}>
-                            <TouchableOpacity onPress={() => Tts.speak(item.title)}>
-                                <FontAwesomeIcon
-                                    icon={faVolumeHigh}
-                                    style={{ color: '#ffffff' }}
-                                    size={18}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ justifyContent: 'center', alignContent: 'center' }}>
-                            <Text style={styles.group}>{item.title}</Text>
-                            <Text style={{ fontSize: 15, color: '#000' }}>{item.phonetic}</Text>
-                        </View>
-                        <View style={{ marginLeft: 100 }}>
-                            <TouchableOpacity onPress={() => { handleDelete(item.id) }}>
-                                <Text>Delete</Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity onPress={() => {
+                                    // setCurrentId(item.id),
+                                    handleDelete(item.id)
+                                }} >
+                                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                                        <FontAwesomeIcon
+                                            icon={faTrash}
+                                            style={{ color: '#f20' }}
+                                            size={18}
+                                        />
+                                        <Text style={{ color: '#f20', marginLeft: 5 }}>Delete</Text>
+                                    </View>
 
-                        </View>
-                        <ModalDropdown options={['option 1', 'option 2']} />
-                    </TouchableOpacity>)
-                    )}
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => {
+                                    setCurrentId(item.id)
+                                    setTitle(item.title)
+                                    setEMean(item.eMean)
+                                    setPhonetic(item.phonetic)
+                                    setImg(item.img)
+                                    setMean(item.mean)
+                                    setExam(item.exam)
+                                    setTrans(item.trans)
+                                    setIsShowEdit(true)
+                                }}>
+                                    <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                                        <FontAwesomeIcon
+                                            icon={faPen}
+                                            style={{ color: '#03B903' }}
+                                            size={18}
+                                        />
+                                        <Text style={{ color: '#03B903', marginLeft: 5 }}>Edit</Text>
+                                    </View>
+
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                    ))}
                 </ScrollView>
             </View>
-            <View style={{
-                position: 'absolute',
-                bottom: 100,
-                right: 20
-            }}>
-                <TouchableOpacity onPress={() => { setModalVisible(true) }}>
-                    <Image source={require('../component/images/add1.png')}
-                        style={styles.icon_addFolder} />
-                </TouchableOpacity>
 
-            </View>
         </View>
     );
 };
