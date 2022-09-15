@@ -15,6 +15,7 @@ import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import Tts from 'react-native-tts';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import listVocabService from '../service/listVocabService';
+import vocabService from '../service/VocabService';
 
 const DetailVocab = ({ route }) => {
     const detail = route.params;
@@ -25,6 +26,23 @@ const DetailVocab = ({ route }) => {
     const [remember, setRemember] = useState(false)
     const [listVocab, setListVocab] = useState([])
     const [creteTable, setCreateTable] = useState(false)
+
+
+    const onSubmitFormHandler = async () => {
+        let data = {
+            title: "Remember",
+            handle: true,
+            score: 0,
+        };
+
+        vocabService
+            .create(data)
+            .then(res => {
+                setListFolder(pre => [res.data, ...pre]);
+                console.log('success fully');
+            })
+            .catch(error => console.log(error));
+    };
 
     const showListVocab = () => {
         listVocabService
