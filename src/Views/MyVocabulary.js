@@ -20,9 +20,6 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import listVocabService from '../service/listVocabService';
 import axios from 'axios';
 import Tts from 'react-native-tts';
-import { err } from 'react-native-svg/lib/typescript/xml';
-import { set } from 'react-native-reanimated';
-
 
 Tts.setIgnoreSilentSwitch('ignore');
 

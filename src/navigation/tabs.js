@@ -18,8 +18,11 @@ const Tabs = ({ route }) => {
     return (
         <Tab.Navigator
             screenOptions={{
-                tabBarShowLabel: false
+                tabBarShowLabel: false,
+
             }}
+
+
         >
 
             <Tab.Screen

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -13,7 +13,8 @@ import GestureFlipView from 'react-native-gesture-flip-card';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import Tts from 'react-native-tts';
-
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import listVocabService from '../service/listVocabService';
 
 const DetailVocab = ({ route }) => {
     const detail = route.params;
@@ -21,7 +22,50 @@ const DetailVocab = ({ route }) => {
     const [currentIndex, setCurrentIndex] = useState(
         detail.vocabGroup.indexOf(currentWord),
     );
+    const [remember, setRemember] = useState(false)
+    const [listVocab, setListVocab] = useState([])
+    const [creteTable, setCreateTable] = useState(false)
 
+    const showListVocab = () => {
+        listVocabService
+            .getAll('50')
+            .then(res => {
+                setListVocab(res.data);
+                console.log('success');
+            })
+            .catch(error => console.log(error));
+    };
+
+    const rememberWord = (item) => {
+        console.log("remember word")
+
+        let listTitle = []
+        if (remember) {
+            let data = {
+                title: item.title,
+                phonetic: item.phonetic,
+                eMean: item.eMean,
+                mean: item.mean,
+                img: item.img,
+                exam: item.exam,
+                trans: item.trans,
+            };
+            listVocab.map(vocab => listTitle.push(vocab.title))
+            listTitle.includes(item.title) ? console.log('have already') : (
+                listVocabService
+                    .create('50', data)
+                    .then(res => {
+                        setListVocab(pre => [res.data, ...pre]);
+                        console.log('success fully');
+                    })
+                    .catch(error => console.log(error))
+                // console.log("add")
+            )
+            console.log(listTitle)
+        }
+
+
+    }
     const getWord = type => {
         if (type === 'next' && currentIndex < detail.vocabGroup.length - 1) {
 
@@ -34,9 +78,27 @@ const DetailVocab = ({ route }) => {
         }
     };
 
+    useEffect(() => {
+        showListVocab()
+    }, [])
+
     const renderFront = () => {
         return (
             <View style={styles.frontStyle}>
+                <View style={{ position: 'absolute', right: 40, top: 30 }}>
+                    <TouchableOpacity onPress={() => {
+                        setRemember(!remember)
+                        rememberWord(currentWord)
+                    }}>
+                        <FontAwesomeIcon
+                            icon={faStar}
+                            style={{ color: remember ? '#f20' : '#9A9796' }}
+                            size={30}
+
+                        />
+                    </TouchableOpacity>
+
+                </View>
                 <Text style={{ fontSize: 30, color: '#000000', fontWeight: 'bold' }}>
                     {currentWord.title}
                 </Text>
@@ -76,7 +138,7 @@ const DetailVocab = ({ route }) => {
                         style={{ width: 220, height: 220, marginTop: 20 }}
                     />
                 </View>
-            </View>
+            </View >
         );
     };
 
