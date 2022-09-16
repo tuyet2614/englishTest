@@ -15,7 +15,6 @@ import vocabService from '../service/VocabService';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
-
 const db = openDatabase(
     {
         name: 'run.db',
@@ -60,7 +59,7 @@ const Item = ({ index, item, onPress }) => (
                 tintColor="#B33B02"
                 backgroundColor="#89917e">
                 {fill => (
-                    <Text style={{ color: '#B33B02', fontSize: 16, }}>{item.score}%</Text>
+                    <Text style={{ color: '#B33B02', fontSize: 16 }}>{item.score}%</Text>
                 )}
             </AnimatedCircularProgress>
         </View>
@@ -70,7 +69,7 @@ const Item = ({ index, item, onPress }) => (
 const Dashboard = ({ route, navigation }) => {
     const [listFolder, setListFolder] = useState([]);
     const [listVocabulary, setListVocabulary] = useState([]);
-    const [score, setScore] = useState(0)
+    const [score, setScore] = useState(0);
 
     let listGroup = [];
 
@@ -86,12 +85,10 @@ const Dashboard = ({ route, navigation }) => {
                 res.data.map(item => (item.handle ? '' : exam.push(item)));
 
                 setListFolder(exam);
-                console.log("success")
+                console.log('success');
             })
             .catch(error => console.log(error));
     };
-
-
 
     const getCategories = () => {
         db.transaction(txn => {
@@ -117,10 +114,12 @@ const Dashboard = ({ route, navigation }) => {
                                 img: item.img,
                                 exam: item.exam,
                                 trans: item.trans,
+                                memory: item.memory,
                             });
                         }
 
                         setListVocabulary(results);
+
                     }
                     // else (
                     //     setCategories([])
@@ -133,42 +132,36 @@ const Dashboard = ({ route, navigation }) => {
         });
     };
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     getCategories();
 
-        getCategories();
-
-    }, []);
+    // }, []);
     useEffect(() => {
         const reRender = navigation.addListener('focus', () => {
             renderFolder();
-        })
+            getCategories();
+        });
         return () => {
-            reRender
-        }
-
-    }, [navigation])
+            reRender;
+        };
+    }, [navigation]);
 
     const renderItem = ({ index, item }) => {
         return (
-
             <Item
                 index={index + 1}
                 item={item}
                 onPress={() => {
-
                     navigation.navigate('ListWord', {
                         group: item,
                         Vocabulary: listVocabulary,
-
                     });
                 }}
             />
         );
     };
     return (
-
         <View style={styles.container}>
-
             <FlatList
                 data={listFolder}
                 renderItem={renderItem}

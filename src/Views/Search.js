@@ -66,6 +66,7 @@ const Search = ({ route, navigation }) => {
             );
         });
     };
+
     useEffect(() => {
         getCategories()
         // setFilterData(listVocabulary);

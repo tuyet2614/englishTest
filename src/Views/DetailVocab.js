@@ -16,8 +16,18 @@ import Tts from 'react-native-tts';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import listVocabService from '../service/listVocabService';
 import vocabService from '../service/VocabService';
+import { openDatabase } from 'react-native-sqlite-storage';
 
-const DetailVocab = ({ route }) => {
+const db = openDatabase(
+    {
+        name: 'run.db',
+        createFromLocation: '~vocabulary.db',
+    },
+    null,
+    null,
+);
+
+const DetailVocab = ({ route, navigation }) => {
     const detail = route.params;
     const [currentWord, setCurrentWord] = useState(detail.detail);
     const [currentIndex, setCurrentIndex] = useState(
@@ -26,7 +36,8 @@ const DetailVocab = ({ route }) => {
     const [remember, setRemember] = useState(false)
     const [listVocab, setListVocab] = useState([])
     const [creteTable, setCreateTable] = useState(false)
-
+    const [isDataRemember, setIsDataRemember] = useState(currentWord.memory)
+    const rememberList = route.params.rememberList
 
     const onSubmitFormHandler = async () => {
         let data = {
@@ -55,7 +66,7 @@ const DetailVocab = ({ route }) => {
     };
 
     const rememberWord = (item) => {
-        console.log("remember word")
+
 
         let listTitle = []
         if (remember) {
@@ -67,8 +78,9 @@ const DetailVocab = ({ route }) => {
                 img: item.img,
                 exam: item.exam,
                 trans: item.trans,
+                memory: item.memory
             };
-            listVocab.map(vocab => listTitle.push(vocab.title))
+            rememberList.map(vocab => listTitle.push(vocab.title))
             listTitle.includes(item.title) ? console.log('have already') : (
                 listVocabService
                     .create('50', data)
@@ -79,26 +91,97 @@ const DetailVocab = ({ route }) => {
                     .catch(error => console.log(error))
                 // console.log("add")
             )
-            console.log(listTitle)
+
         }
 
 
     }
+
+    const deleteRememberWord = (currentdelete) => {
+        // rememberList.map(item => currentdelete === item.title ? (listVocabService
+        //     .remove('50', item.id)
+        //     .then(res => {
+        //         // const newlistVocab = rememberList.filter(
+        //         //     item => item.id !== currentdelete,
+        //         // console.log("")
+        //         // );
+        //         // setListVocab(newlistVocab);
+        //         console.log('delete successfully:', currentdelete);
+        //     })
+        //     .catch(error => console.log(error))) : '')
+
+        listVocabService
+            .remove('50', currentdelete)
+            .then(res => {
+                const newlistVocab = listVocab.filter(
+                    item => item.id !== currentdelete,
+                );
+                setListVocab(newlistVocab);
+                console.log('delete successfully');
+            })
+            .catch(error => console.log(error));
+    }
+
     const getWord = type => {
         if (type === 'next' && currentIndex < detail.vocabGroup.length - 1) {
 
             setCurrentWord(detail.vocabGroup[currentIndex + 1]);
             setCurrentIndex(currentIndex + 1);
+            setIsDataRemember(detail.vocabGroup[currentIndex + 1].memory)
         } else if (type === 'pre' && currentIndex > 0) {
             setCurrentWord(detail.vocabGroup[currentIndex - 1]);
             setCurrentIndex(currentIndex - 1);
-
+            setIsDataRemember(detail.vocabGroup[currentIndex - 1].memory)
         }
     };
 
+    let updateIsRemember = () => {
+
+        console.log("number:", isDataRemember);
+        let check = remember ? ('1') : ('0')
+        console.log("check", check)
+        db.transaction((tx) => {
+            tx.executeSql(
+                'UPDATE vocabulary set memory=? where id=?',
+                [check, currentWord.id],
+                (tx, results) => {
+                    if (results.rowsAffected > 0) {
+                        tx.executeSql('SELECT * FROM vocabulary WHERE id=?', [currentWord.id],
+                            (sqlTxn, res) => {
+                                console.log('check:', res.rows.item(0))
+                                setIsDataRemember(res.rows.item(0).memory)
+                                if (res.rows.item(0).memory === '1')
+                                    rememberWord(res.rows.item(0))
+                                else {
+                                    console.log("current:", currentWord.id)
+                                    deleteRememberWord(currentWord.id)
+                                }
+                            }),
+                            (error) => { console.log(error) }
+
+                    } else alert('Updation Failed');
+                },
+                (error) => {
+                    console.log('error on getting categories ' + error.message);
+                },
+            );
+        });
+    };
+
     useEffect(() => {
-        showListVocab()
-    }, [])
+        const reRender = navigation.addListener('focus', () => {
+            showListVocab();
+            // getCategories();
+        });
+        return () => {
+            reRender;
+        };
+    }, [navigation]);
+
+
+    // useEffect(() => {
+    //     showListVocab()
+    // }, [])
 
     const renderFront = () => {
         return (
@@ -106,11 +189,12 @@ const DetailVocab = ({ route }) => {
                 <View style={{ position: 'absolute', right: 40, top: 30 }}>
                     <TouchableOpacity onPress={() => {
                         setRemember(!remember)
+                        updateIsRemember()
                         rememberWord(currentWord)
                     }}>
                         <FontAwesomeIcon
                             icon={faStar}
-                            style={{ color: remember ? '#f20' : '#9A9796' }}
+                            style={{ color: isDataRemember === '1' ? '#f20' : '#9A9796' }}
                             size={30}
 
                         />

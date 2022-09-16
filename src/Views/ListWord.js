@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     View,
@@ -11,7 +11,7 @@ import {
 import styles from '../component/Style';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
-
+import listVocabService from '../service/listVocabService';
 import Tts from 'react-native-tts';
 
 Tts.setIgnoreSilentSwitch('ignore');
@@ -26,6 +26,8 @@ const ListWord = ({ route, navigation }) => {
     const vocabList = route.params.group.title;
     const currentId = route.params.group.id;
     const reRender = 0
+    const [listVocabBrowser, setListVocabBrowser] = useState([])
+    const [checkId, setCheckId] = useState('')
 
     console.log(currentId);
 
@@ -34,6 +36,27 @@ const ListWord = ({ route, navigation }) => {
     Vocabulary.map(item =>
         item.group === vocabList ? listVocab.push(item) : '',
     );
+
+    const showListVocab = () => {
+        listVocabService
+            .getAll('50')
+            .then(res => {
+                setListVocabBrowser(res.data);
+                console.log('successfull');
+            })
+            .catch(error => console.log(error));
+    };
+    useEffect(() => {
+        showListVocab()
+    }, [])
+
+    // const getDeleteId = (title) => {
+    //     let check = []
+    //     listVocabBrowser.map(item => {
+    //         item.title === title ? check.push(item.id) : ''
+    //     })
+    //     return check
+    // }
 
     return (
         <View style={{ backgroundColor: '#ffffff', flex: 0.9 }}>
@@ -56,13 +79,17 @@ const ListWord = ({ route, navigation }) => {
             </View>
             <View>
                 <ScrollView>
+
                     {listVocab.map(item => (
+                        // console.log("return", getDeleteId(item.title)),
+
                         <TouchableOpacity
                             style={styles.item}
                             onPress={() => {
                                 navigation.navigate('DetailWord', {
                                     vocabGroup: listVocab,
                                     detail: item,
+                                    rememberList: listVocabBrowser
                                 });
 
                             }}>
